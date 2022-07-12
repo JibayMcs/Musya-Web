@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Passport\Client;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AuthController extends Controller
@@ -24,13 +25,12 @@ class AuthController extends Controller
         ]);
 
         if (!auth()->attempt($data)) {
-            return response()->json(['error_message' => 'Incorrect Details.
-            Please try again']);
+            return abort(422, 'Incorrect Details.');
         }
 
-        dd(auth()->user()->tokens->first()->accessToken);
+        $user = auth()->user();
 
-        return response()->json(['user' => auth()->user()->toJson(), 'token' => $response->json()], 200);
+        return $user;
     }
 
     public function register(Request $request)
@@ -47,21 +47,6 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        if ($user) {
-            $response = Http::asForm()->post('http://musya.local/oauth/token', [
-                'grant_type' => 'password',
-                'client_id' => '1',
-                'client_secret' => 'sf6CDNiAYb9uvddxJq0nIKYf6rlqiRrpugxiA0FA',
-                'username' => $user->email,
-                'password' => $request->password,
-                'scope' => '',
-            ]);
-
-            if ($response->status() == 200)
-                return response()->json(['user' => $user->toJson(), 'token' => $response->json()], 200);
-            else {
-                return response()->json(['user_creation_erro' => 'Unable to generate user access token'], 419);
-            }
-        }
+        return $user;
     }
 }

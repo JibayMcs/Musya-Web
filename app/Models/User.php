@@ -41,6 +41,10 @@ class User extends Authenticatable
     protected $casts = [
     ];
 
+    protected $appends = [
+        'accessToken'
+    ];
+
     /**
      * Find the user instance for the given username.
      *
@@ -50,5 +54,10 @@ class User extends Authenticatable
     public function findForPassport($username)
     {
         return $this->where('email', $username)->first();
+    }
+
+    public function getAccessTokenAttribute()
+    {
+        return $this->accessToken ?? $this->createToken($this->name)->accessToken;
     }
 }
