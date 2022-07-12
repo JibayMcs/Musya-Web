@@ -25,6 +25,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/download/{url}', [YoutubeController::class, 'download'])->name('download');
     Route::resource('artists', ArtistController::class);
+
+    Route::get('/redirect', function () {
+
+        $query = http_build_query([
+            'client_id' => '1',
+            'redirect_uri' => 'http://localhost',
+            'response_type' => 'token',
+            'scope' => '',
+            'state' => Str::random(40),
+        ]);
+
+        return redirect('/oauth/authorize?'.$query);
+    });
 });
 
 require __DIR__.'/auth.php';
