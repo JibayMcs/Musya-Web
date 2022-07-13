@@ -14,10 +14,12 @@ return new class extends Migration {
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->string('id')->primary()->unique();
+            $table->unsignedBigInteger('album_id');
             $table->string('name');
             $table->string('cover');
             $table->string('path');
-            $table->unsignedBigInteger('album_id');
+            $table->unsignedBigInteger('duration')->nullable();
+            $table->unsignedBigInteger('filesize')->nullable();
             $table->timestamps();
 
             $table->foreign('album_id')

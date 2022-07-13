@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "keywords": [
+        "framework",
+        "laravel"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
@@ -12,7 +15,7 @@
         "laravel/passport": "^10.4",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
-        "norkunas/youtube-dl-php": "dev-master",
+        "norkunas/youtube-dl-php": "^v2.1.2",
         "owen-oj/laravel-getid3": "^2.1"
     },
     "require-dev": {

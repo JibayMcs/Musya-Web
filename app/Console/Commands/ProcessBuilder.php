@@ -19,6 +19,7 @@ class ProcessBuilder implements ProcessBuilderInterface
 
     public function build(?string $binPath, ?string $pythonPath, array $arguments = []): Process
     {
+        //Remove --write-info-json
 //        unset($arguments[2]);
 
         $binPath = $binPath ?: $this->executableFinder->find('youtube-dl');
@@ -29,15 +30,14 @@ class ProcessBuilder implements ProcessBuilderInterface
 
         array_unshift($arguments, $binPath);
 
+        array_splice($arguments, 4, 0, array('--no-clean-infojson'));
+
         if ($pythonPath !== null) {
             array_unshift($arguments, $pythonPath);
         }
 
-//        dd($arguments);
-//        dd($pythonPath);
-//        dd(implode(' ', $arguments));
 
-        $process = new Process([$binPath, $pythonPath, ...$arguments]);
+        $process = new Process($arguments);
         $process->setTimeout(null);
 
         return $process;

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Owenoj\LaravelGetId3\GetId3;
 
 class Track extends Model
@@ -17,11 +18,14 @@ class Track extends Model
 
     protected $fillable = [
         'id',
+        'album_id',
         'name',
         'cover',
         'path',
-        'album_id'
+        'duration',
+        'filesize'
     ];
+
 
     public function album()
     {
@@ -33,6 +37,9 @@ class Track extends Model
         return GetId3::fromDiskAndPath('public', str_replace('home/vagrant/musya/storage/app/public/', '', $this->path));
     }
 
+    /**
+     * @throws \getid3_exception
+     */
     public function duration(): string
     {
         $duration = $this->id3()->getPlaytimeSeconds();

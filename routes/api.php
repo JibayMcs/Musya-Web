@@ -29,4 +29,5 @@ Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
         return request()->user();
     });
     Route::apiResource('artists', ArtistController::class)->only(['index', 'show']);
+    Route::get('artists/{artist}/tracks', [ArtistController::class, 'tracks']);
 });

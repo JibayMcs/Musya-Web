@@ -14,9 +14,9 @@ class ArtistController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index()
     {
-        return response()->json(Artist::paginate(30));
+        return Artist::paginate(30);
     }
 
     /**
@@ -25,9 +25,13 @@ class ArtistController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function show(Artist $artist): JsonResponse
+    public function show(Artist $artist)
     {
-        return response()->json($artist);
+        return $artist;
     }
 
+    public function tracks(Artist $artist)
+    {
+        return $artist->tracks;
+    }
 }
