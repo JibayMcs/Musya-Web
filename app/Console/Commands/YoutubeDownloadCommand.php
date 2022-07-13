@@ -19,7 +19,7 @@ class YoutubeDownloadCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'youtubedl {url}';
+    protected $signature = 'youtubedl {url} {--max-dl=-1}';
 
     /**
      * The console command description.
@@ -28,22 +28,6 @@ class YoutubeDownloadCommand extends Command
      */
     protected $description = 'YoutubeDownloadCommand Commands';
 
-    protected function implode_recursive(string $separator, array $array): string
-    {
-        $string = '';
-        foreach ($array as $i => $a) {
-            if (is_array($a)) {
-                $string .= $this->implode_recursive($separator, $a);
-            } else {
-                $string .= $a;
-                if ($i < count($array) - 1) {
-                    $string .= $separator;
-                }
-            }
-        }
-
-        return $string;
-    }
 
     /**
      * Execute the console command.
@@ -53,15 +37,15 @@ class YoutubeDownloadCommand extends Command
     public function handle(): int
     {
         $url = $this->argument('url');
+        $maxDownload = $this->option('max-dl');
+
         $storage_url = Storage::disk('public')->path('music');
         $storage_path = "$storage_url/%(artist)s/%(album)s/";
-
-        $processBuilder = new ProcessBuilder();
 
         $yt = new YoutubeDl();
 
         $yt->setBinPath(config('musya.youtubedl_bin_path'));
-//        $yt->setPythonPath(config('musya.python3_bin_path'));
+        //$yt->setPythonPath(config('musya.python3_bin_path'));
 
         $options = Options::create()
             ->output('%(title)s.%(ext)s')
@@ -73,12 +57,12 @@ class YoutubeDownloadCommand extends Command
             ->audioQuality(Options::AUDIO_FORMAT_BEST)
             ->embedThumbnail(true)
             ->matchFilter("album!=''")
-//            ->noOverwrites(true)
+            //->noOverwrites(true)
             ->skipUnavailableFragments(true)
             ->cookies(Storage::disk('public')->path('cookies.txt'))
-            ->maxDownloads(50)
+            ->maxDownloads($maxDownload)
             ->noPart(true);
-//            ->skipDownload(true);
+            //->skipDownload(true);
 
 
         $collection = $yt->download($options);
@@ -106,12 +90,12 @@ class YoutubeDownloadCommand extends Command
                     'artist_id' => $artist->id
                 ]);
 
-                $track = Track::firstOrCreate([
+                Track::firstOrCreate([
                     'id' => $video->getId(),
                 ], [
                     'name' => $video->getTrack(),
                     'cover' => $video->get('thumbnail'),
-                    'path' => $video->get('_filename'),
+                    'path' => $this->getAudioFilePath($video),
                     'album_id' => $album->id,
                     'filesize' => $video->getFilesize() ?? 0,
                     'duration' => $video->getDuration() ?? 0,
@@ -121,4 +105,11 @@ class YoutubeDownloadCommand extends Command
         return 1;
     }
 
+    private function getAudioFilePath($video): string
+    {
+        $index = strpos($video->get('_filename'), '/app/public/') + strlen('/app/public/');
+        $result = substr($video->get('_filename'), $index);
+
+        return Storage::url($result);
+    }
 }
