@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\ArtistController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
+use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
+use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,10 +25,30 @@ Route::group(['prefix' => 'v1'], function () {
     });
 });
 
-Route::group(['middleware' => 'auth:api', 'prefix' => 'v1'], function () {
-    Route::get('user', function () {
+Route::group(['middleware' => 'auth:api'], function () {
+
+    /*Route::get('user', function () {
         return request()->user();
     });
     Route::apiResource('artists', ArtistController::class)->only(['index', 'show']);
-    Route::get('artists/{artist}/tracks', [ArtistController::class, 'tracks']);
+    Route::get('artists/{artist}/tracks', [ArtistController::class, 'tracks']);*/
+});
+
+JsonApiRoute::server('v1')->prefix('v1')->resources(function ($server) {
+
+    $server->resource('artists', JsonApiController::class)
+        ->readOnly()
+        ->relationships(function ($relations) {
+            $relations->hasMany('albums')->readOnly();
+        });
+
+    $server->resource('albums', JsonApiController::class)
+        ->readOnly()
+        ->relationships(function ($relations) {
+            $relations->hasMany('tracks')->readOnly();
+        });
+
+    $server->resource('tracks', JsonApiController::class)
+        ->readOnly();
+
 });
