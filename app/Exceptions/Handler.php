@@ -24,7 +24,7 @@ class Handler extends ExceptionHandler
      * @var array<int, class-string<\Throwable>>
      */
     protected $dontReport = [
-        JsonApiException::class,
+//        JsonApiException::class,
     ];
 
     /**
@@ -49,8 +49,8 @@ class Handler extends ExceptionHandler
             //
         });
 
-        $this->renderable(
+        /*$this->renderable(
             \LaravelJsonApi\Exceptions\ExceptionParser::make()->renderable()
-        );
+        );*/
     }
 }

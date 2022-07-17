@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ArtistController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
@@ -23,18 +24,20 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('auth/test', function () {
         return response()->json(json_encode(['caca' => 'pipi']));
     });
-});
 
-Route::group(['middleware' => 'auth:api'], function () {
+    Route::group(['middleware' => 'auth:api'], function () {
 
-    /*Route::get('user', function () {
-        return request()->user();
+        Route::get('user', function () {
+            return request()->user();
+        });
+        Route::apiResource('artists', ArtistController::class)->only(['index', 'show']);
+        Route::get('artists/{artist}/tracks', [ArtistController::class, 'tracks']);
     });
-    Route::apiResource('artists', ArtistController::class)->only(['index', 'show']);
-    Route::get('artists/{artist}/tracks', [ArtistController::class, 'tracks']);*/
 });
 
-JsonApiRoute::server('v1')->prefix('v1')->resources(function ($server) {
+
+
+/*JsonApiRoute::server('v1')->prefix('v1')->resources(function ($server) {
 
     $server->resource('artists', JsonApiController::class)
         ->readOnly()
@@ -51,4 +54,4 @@ JsonApiRoute::server('v1')->prefix('v1')->resources(function ($server) {
     $server->resource('tracks', JsonApiController::class)
         ->readOnly();
 
-});
+});*/

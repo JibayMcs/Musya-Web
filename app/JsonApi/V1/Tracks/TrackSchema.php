@@ -33,7 +33,7 @@ class TrackSchema extends Schema
     {
         return [
             ID::make(),
-            BelongsTo::make('album_id')->readOnly(),
+            BelongsTo::make('albums', 'album_id')->readOnly(),
             Str::make('name')->readOnly(),
             Str::make('cover')->readOnly(),
             Str::make('path')->readOnly(),
